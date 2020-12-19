@@ -36,31 +36,4 @@ class DefaultController extends AbstractController
         ]);
     }
 
-//    /**
-//     * @Route("registeruser", name="registerUser", methods={"POST"})
-//     * @param MailerInterface $mailer
-//     * @return JsonResponse
-//     * @throws TransportExceptionInterface
-//     */
-//    public function register(MailerInterface $mailer)
-//    {
-//            $user = new User();
-//
-//            $user->setEmail('user'.random_int(0, 5000).'@example.com');
-//            $user->setPassword(000);
-//
-//            $em = $this->getDoctrine()->getManager();
-//            $em->persist($user);
-//            $em->flush();
-//
-//            $email = (new Email())
-//                ->from('sym5@example.com')
-//                ->to($user->getEmail())
-//                ->subject('Welcome to Sym5')
-//                ->text('Hello there!\n\n\n❤');
-//
-//            $mailer->send($email);
-//
-//        return $this->json('Done successfully');
-//    }
 }
