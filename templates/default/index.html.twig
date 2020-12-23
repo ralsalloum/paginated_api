@@ -6,13 +6,22 @@
     <title>My Application</title>
 </head>
 <body>
-<ul>
+<table>
+    <tr>
+        <td style="width: 200px">Product name</td>
+        <td style="width: 200px">Price</td>
+        <td style="width: 200px">Product Image</td>
+        <td style="width: 200px">Product Supplier</td>
+    </tr>
     {% for product in products %}
-        <li>
-            {{ product.name }}
-        </li>
+        <tr>
+            <td>{{ product.name }} </td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.imagePath }}</td>
+            <td>{{ product.fullName }}</td>
+        </tr>
     {% endfor %}
-</ul>
+</table>
 
 <div class="navigation">
     {{ knp_pagination_render(products) }}

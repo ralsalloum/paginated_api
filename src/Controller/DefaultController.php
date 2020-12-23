@@ -4,8 +4,11 @@
 namespace App\Controller;
 
 
+use App\Entity\Image;
 use App\Entity\Product;
+use App\Entity\Supplier;
 use App\Entity\User;
+use Doctrine\ORM\Query\Expr\Join;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,12 +26,27 @@ class DefaultController extends AbstractController
 
         $productRepository = $em->getRepository(Product::class);
 
-        $query = $productRepository->createQueryBuilder('p')->getQuery();
+        $query = $productRepository->createQueryBuilder('p')
+            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
+            ->leftJoin(
+                Image::class,
+                'image',
+                Join::WITH,
+                'p.image = image.id'
+            )
+            ->leftJoin(
+                Supplier::class,
+                'supplier',
+                Join::WITH,
+                'p.supplier = supplier.id'
+            )
+            ->setMaxResults(1000)
+            ->getQuery();
 
         $products = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
-            5
+            100
         );
 
         return $this->render('default/index.html.twig', [
