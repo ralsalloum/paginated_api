@@ -8,49 +8,45 @@ use App\Entity\Image;
 use App\Entity\Product;
 use App\Entity\Supplier;
 use App\Entity\User;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class DefaultController extends AbstractController
 {
-    public function index(Request $request, PaginatorInterface $paginator)
+    /**
+     * @Route("products/{page<\d+>?1}", name="list_products", methods={"GET"})
+     * @param Request $request
+     * @param ProductRepository $productRepository
+     * @param SerializerInterface $serializer
+     * @return Response
+     */
+    public function index(Request $request, ProductRepository $productRepository,
+    SerializerInterface $serializer)
     {
-        $em = $this->getDoctrine()->getManager();
+        $page = $request->query->get('page');
 
-        $productRepository = $em->getRepository(Product::class);
+        if(is_null($page) || $page < 1) {
+            $page = 1;
+        }
 
-        $query = $productRepository->createQueryBuilder('p')
-            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
-            ->leftJoin(
-                Image::class,
-                'image',
-                Join::WITH,
-                'p.image = image.id'
-            )
-            ->leftJoin(
-                Supplier::class,
-                'supplier',
-                Join::WITH,
-                'p.supplier = supplier.id'
-            )
-            ->setMaxResults(1000)
-            ->getQuery();
+        $limit = 10;
+        $products = $productRepository->findAllProducts($page, getenv('LIMIT'));
 
-        $products = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            100
-        );
+        $data = $serializer->serialize($products, 'json');
 
-        return $this->render('default/index.html.twig', [
-            'products'=>$products
+        return new Response(
+            $data, 200,  [
+            'Content-Type' => 'application/json'
         ]);
     }
 
