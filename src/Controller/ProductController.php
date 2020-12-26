@@ -36,6 +36,7 @@ class ProductController extends BaseController
         $this->autoMapping = $autoMapping;
     }
 
+    //Paginated RESTFUL API
     /**
      * @Route("products/{page<\d+>?1}", name="list_products", methods={"GET"})
      * @param Request $request
@@ -52,4 +53,44 @@ class ProductController extends BaseController
         return $this->response($products, self::FETCH);
     }
 
+    //Paginated Twig API
+    /**
+     * @Route("productstwig", name="getProductsInTwig", methods={"GET"})
+     * @param Request $request
+     * @param PaginatorInterface $paginator
+     * @return Response
+     */
+    public function getProductsTwig(Request $request, PaginatorInterface $paginator)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $productRepository = $em->getRepository(Product::class);
+
+        $query = $productRepository->createQueryBuilder('p')
+            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
+            ->leftJoin(
+                Image::class,
+                'image',
+                Join::WITH,
+                'p.image = image.id'
+            )
+            ->leftJoin(
+                Supplier::class,
+                'supplier',
+                Join::WITH,
+                'p.supplier = supplier.id'
+            )
+            ->setMaxResults(1000)
+            ->getQuery();
+
+        $products = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            100
+        );
+
+        return $this->render('default/index.html.twig', [
+            'products'=>$products
+        ]);
+    }
 }
