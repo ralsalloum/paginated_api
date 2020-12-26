@@ -23,4 +23,9 @@ class ProductService
     {
         return $this->productManager->getProducts($page, $limit);
     }
+
+    public function getPaginatedProducts(Request $request)
+    {
+        return $this->productManager->getPaginatedProducts($request);
+    }
 }

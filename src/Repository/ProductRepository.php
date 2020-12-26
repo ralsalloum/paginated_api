@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Image;
 use App\Entity\Product;
+use App\Entity\Supplier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -49,12 +52,46 @@ class ProductRepository extends ServiceEntityRepository
     }
     */
 
-    public function findAllProducts($page, $limit)
+    public function findAllProductsQuery($page, $limit)
     {
         $query = $this->createQueryBuilder('p')
+            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
+            ->leftJoin(
+                Image::class,
+                'image',
+                Join::WITH,
+                'p.image = image.id'
+            )
+            ->leftJoin(
+                Supplier::class,
+                'supplier',
+                Join::WITH,
+                'p.supplier = supplier.id'
+            )
             ->getQuery()
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
-        return new Paginator($query);
+
+        return $query;
+    }
+
+    public function getProductsQuery()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
+            ->leftJoin(
+                Image::class,
+                'image',
+                Join::WITH,
+                'p.image = image.id'
+            )
+            ->leftJoin(
+                Supplier::class,
+                'supplier',
+                Join::WITH,
+                'p.supplier = supplier.id'
+            )
+            ->setMaxResults(1000)
+            ->getQuery();
     }
 }

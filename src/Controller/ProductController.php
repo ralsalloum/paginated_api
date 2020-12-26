@@ -42,7 +42,7 @@ class ProductController extends BaseController
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request)
+    public function getProducts(Request $request)
     {
         $page = $request->query->get('page');
 
@@ -62,35 +62,10 @@ class ProductController extends BaseController
      */
     public function getProductsTwig(Request $request, PaginatorInterface $paginator)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $productRepository = $em->getRepository(Product::class);
-
-        $query = $productRepository->createQueryBuilder('p')
-            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
-            ->leftJoin(
-                Image::class,
-                'image',
-                Join::WITH,
-                'p.image = image.id'
-            )
-            ->leftJoin(
-                Supplier::class,
-                'supplier',
-                Join::WITH,
-                'p.supplier = supplier.id'
-            )
-            ->setMaxResults(1000)
-            ->getQuery();
-
-        $products = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            100
-        );
+        $paginatedProducts = $this->productService->getPaginatedProducts($request);
 
         return $this->render('default/index.html.twig', [
-            'products'=>$products
+            'products'=>$paginatedProducts
         ]);
     }
 }
