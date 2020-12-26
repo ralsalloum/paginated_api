@@ -4,11 +4,13 @@
 namespace App\Controller;
 
 
+use App\AutoMapping;
 use App\Entity\Image;
 use App\Entity\Product;
 use App\Entity\Supplier;
 use App\Entity\User;
 use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Doctrine\ORM\Query\Expr\Join;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,33 +23,33 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class DefaultController extends AbstractController
+class ProductController extends BaseController
 {
+    private $productService;
+    private $autoMapping;
+
+    public function __construct(ProductService $productService, AutoMapping $autoMapping,
+                                SerializerInterface $serializer)
+    {
+        parent::__construct($serializer);
+        $this->productService = $productService;
+        $this->autoMapping = $autoMapping;
+    }
+
     /**
      * @Route("products/{page<\d+>?1}", name="list_products", methods={"GET"})
      * @param Request $request
-     * @param ProductRepository $productRepository
-     * @param SerializerInterface $serializer
      * @return Response
      */
-    public function index(Request $request, ProductRepository $productRepository,
-    SerializerInterface $serializer)
+    public function index(Request $request)
     {
         $page = $request->query->get('page');
 
-        if(is_null($page) || $page < 1) {
-            $page = 1;
-        }
+        $limit = 10;    //Can be defined in .env later
 
-        $limit = 10;
-        $products = $productRepository->findAllProducts($page, getenv('LIMIT'));
+        $products = $this->productService->getProducts($page, $limit);
 
-        $data = $serializer->serialize($products, 'json');
-
-        return new Response(
-            $data, 200,  [
-            'Content-Type' => 'application/json'
-        ]);
+        return $this->response($products, self::FETCH);
     }
 
 }
