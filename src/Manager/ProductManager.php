@@ -35,7 +35,11 @@ class ProductManager
 
         $query = $this->productRepository->findAllProductsQuery($page, $limit);
 
-        return $this->paginator->paginate($query);
+//        $query = $this->entityManager->createQuery($sql)
+//            ->setFirstResult(($page - 1) * $limit)
+//            ->setMaxResults($limit);
+
+        return new Paginator($query);
     }
 
     public function getPaginatedProducts($request)

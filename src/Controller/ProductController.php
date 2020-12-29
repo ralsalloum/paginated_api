@@ -27,6 +27,7 @@ class ProductController extends BaseController
 {
     private $productService;
     private $autoMapping;
+    private $serializer;
 
     public function __construct(ProductService $productService, AutoMapping $autoMapping,
                                 SerializerInterface $serializer)
@@ -34,6 +35,7 @@ class ProductController extends BaseController
         parent::__construct($serializer);
         $this->productService = $productService;
         $this->autoMapping = $autoMapping;
+        $this->serializer = $serializer;
     }
 
     //Paginated RESTFUL API
@@ -46,9 +48,14 @@ class ProductController extends BaseController
     {
         $page = $request->query->get('page');
 
-        $limit = 10;    //Can be defined in .env later
-
+        $limit = 100;    //Can be defined in .env later
+        //dd($page);
         $products = $this->productService->getProducts($page, $limit);
+
+//        $data = $this->serializer->serialize($products, 'json');
+//        return new Response($data, 200, [
+//            'Content-Type' => 'application/json'
+//        ]);
 
         return $this->response($products, self::FETCH);
     }

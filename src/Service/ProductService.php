@@ -6,6 +6,8 @@ namespace App\Service;
 
 use App\AutoMapping;
 use App\Manager\ProductManager;
+use App\Response\GetProductResponse;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProductService
@@ -21,7 +23,18 @@ class ProductService
 
     public function getProducts($page, $limit)
     {
-        return $this->productManager->getProducts($page, $limit);
+        $paginatedResult = $this->productManager->getProducts($page, $limit);
+        //dd($paginatedResult);
+//        $response = [];
+//
+//        foreach ($paginatedResult as $key => $value)
+//        {
+//            dd($paginatedResult[$key]);
+////            $response[] = $this->autoMapping->map(Paginator::class, GetProductResponse::class, $item[0]);
+//        }
+//
+//        dd($response);
+        return $paginatedResult;
     }
 
     public function getPaginatedProducts(Request $request)
