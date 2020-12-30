@@ -55,7 +55,7 @@ class ProductRepository extends ServiceEntityRepository
     public function findAllProductsQuery($page, $limit)
     {
         $query = $this->createQueryBuilder('p')
-            ->addSelect('image.imagePath', 'supplier.fullName')
+            ->select('p.name', 'p.price', 'image.imagePath', 'supplier.fullName')
             ->leftJoin(
                 Supplier::class,
                 'supplier',

@@ -38,8 +38,10 @@ class ProductManager
 //        $query = $this->entityManager->createQuery($sql)
 //            ->setFirstResult(($page - 1) * $limit)
 //            ->setMaxResults($limit);
-
-        return new Paginator($query);
+        
+        $items = new Paginator($query);
+        $items->setUseOutputWalkers(false);
+        return $items;
     }
 
     public function getPaginatedProducts($request)
