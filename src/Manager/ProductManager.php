@@ -19,12 +19,12 @@ class ProductManager
     private $paginator;
 
     public function __construct(EntityManagerInterface $entityManager, ProductRepository $productRepository,
-                                AutoMapping $autoMapping, PaginatorInterface $paginator)
+                                AutoMapping $autoMapping)
     {
         $this->entityManager = $entityManager;
         $this->productRepository = $productRepository;
         $this->autoMapping = $autoMapping;
-        $this->paginator = $paginator;
+        //$this->paginator = $paginator;
     }
 
     public function getProducts($page, $limit)
@@ -39,9 +39,11 @@ class ProductManager
 //            ->setFirstResult(($page - 1) * $limit)
 //            ->setMaxResults($limit);
         
-        $items = new Paginator($query);
-        $items->setUseOutputWalkers(false);
-        return $items;
+        $paginatedQuery = new Paginator($query, false);
+        $paginatedQuery->setUseOutputWalkers(false);
+        //$query->setHint('knp_paginator.count', $paginatedQuery->count());
+
+        return $paginatedQuery;
     }
 
     public function getPaginatedProducts($request)
