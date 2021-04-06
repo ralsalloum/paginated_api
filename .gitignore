@@ -10,6 +10,7 @@
 .env
 .env.test
 .env.prod
+debug.log
 
 /.idea
 /.idea/
