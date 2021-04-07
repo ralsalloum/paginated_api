@@ -58,4 +58,9 @@ class ProductManager
 
         return $products;
     }
+
+    public function getProductByPrice($price)
+    {
+        return $this->productRepository->getProductByPrice($price);
+    }
 }

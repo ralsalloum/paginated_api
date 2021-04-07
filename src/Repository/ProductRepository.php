@@ -97,4 +97,16 @@ class ProductRepository extends ServiceEntityRepository
             ->setMaxResults(1000)
             ->getQuery();
     }
+
+    public function getProductByPrice($price)
+    {
+        return $this->createQueryBuilder('product')
+            ->select('product.id', 'product.name', 'product.price')
+
+            ->andWhere('product.price = :value')
+            ->setParameter('value', $price)
+
+            ->getQuery()
+            ->getResult();
+    }
 }

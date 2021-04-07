@@ -41,4 +41,17 @@ class ProductService
     {
         return $this->productManager->getPaginatedProducts($request);
     }
+
+    public function getProductByPrice($price)
+    {
+        $response = [];
+        $product = $this->productManager->getProductByPrice($price);
+
+        foreach($product as $item)
+        {
+            $response = $this->autoMapping->map('array', GetProductResponse::class, $item);
+        }
+
+        return $response;
+    }
 }

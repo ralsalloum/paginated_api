@@ -5,21 +5,10 @@ namespace App\Controller;
 
 
 use App\AutoMapping;
-use App\Entity\Image;
-use App\Entity\Product;
-use App\Entity\Supplier;
-use App\Entity\User;
-use App\Repository\ProductRepository;
 use App\Service\ProductService;
-use Doctrine\ORM\Query\Expr\Join;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -74,5 +63,15 @@ class ProductController extends BaseController
         return $this->render('default/index.html.twig', [
             'products'=>$paginatedProducts
         ]);
+    }
+
+    /**
+     * @Route("product/{price}", name="getProductByPrice", methods={"GET"})
+     */
+    public function getProductByPrice($price)
+    {
+        $result = $this->productService->getProductByPrice($price);
+
+        return $this->response($result, self::FETCH);
     }
 }
