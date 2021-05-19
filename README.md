@@ -13,7 +13,7 @@ In order to use pagination in our project we need to install KnpPaginatorBundle.
 composer require knplabs/knp-paginator-bundle
 Enabling the bundle happens automatically on the app/config/bundles.php in Symfony 4 and in the versions later, due to Flex.
 
-### ### Using Paginator
+### Using Paginator
 
 First, make sure that our controller extends the AbstractController class as this is the one that allows you to access multiple services with the get method of the class.
 
