@@ -29,16 +29,13 @@ class ProductController extends BaseController
 
     //Paginated RESTFUL API
     /**
-     * @Route("products/{page<\d+>?1}", name="list_products", methods={"GET"})
-     * @param Request $request
+     * @Route("products/{page}", name="list_products", methods={"GET"})
      * @return Response
      */
-    public function getProducts(Request $request)
+    public function getProducts($page)
     {
-        $page = $request->query->get('page');
-
         $limit = 100;    //Can be defined in .env later
-        //dd($page);
+
         $products = $this->productService->getProducts($page, $limit);
 
 //        $data = $this->serializer->serialize($products, 'json');
